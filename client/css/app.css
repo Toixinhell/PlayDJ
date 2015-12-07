@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+body {
+    padding: 60px;
+}
+
+#video {
+	text-align:center;
+}
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.container {
+    min-width: 100%;
+}

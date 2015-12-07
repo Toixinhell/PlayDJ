@@ -1,0 +1,42 @@
+
+<template name="video">
+    <div id="video">
+        <div id="video-player">
+            <div id="yt-wrapper">
+                <div id="ytplayer">
+                </div>
+                <div class="corner topleft"></div>
+                <div class="corner topright"></div>
+                <div id="iframe-overlay">
+                </div>
+            </div>
+            <div class="video-control">
+                {{>info}}
+                {{>control}}
+                {{>slider}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="info">
+    <div id="video-info">
+        <div id="video-title">
+            <small>{{title}}</small>
+        </div>
+    </div>
+</template>
+
+<template name="control">
+    <div id="video-play" class="btn-play">
+        {{#if isPlaying}}
+            <span class="fui-pause"></span>
+        {{else}}
+            <span class="fui-play"></span>
+        {{/if}}
+    </div>
+</template>
+
+<template name="slider">
+    <div id="video-slider" class="ui-slider"></div>
+</template>

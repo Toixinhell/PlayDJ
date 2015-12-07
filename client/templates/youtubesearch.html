@@ -1,0 +1,26 @@
+<template name="youtubeSearch">
+    <h4>Search Youtube</h4>
+    <div>
+
+
+            <input type="text" id="vidSearch">
+            <input type="button" value="search" class="serchVid">
+
+        <h5>Results</h5>
+        {{#if foo}}
+            <ul style="list-style:none;padding:0">
+                {{#each results.items}}
+                    {{> resultitem}}
+                {{/each}}
+            </ul>
+        {{/if}}
+        {{#unless foo}}<p>Nothing searched for</p>{{/unless}}
+    </div>
+</template>
+
+<template name="resultitem">
+    <li class="list">
+        <a href="#">  {{snippet.title}}</a>
+        <i class="icon icon-plus-sign pull-right addToVideolist"></i>
+    </li>
+</template>

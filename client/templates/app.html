@@ -1,0 +1,45 @@
+
+
+
+<template name="nav">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <a class="brand" href="#">PlayTogether</a>
+            <ul class="nav">
+                <li><a href="https://github.com/jeredepp/playtogether" target="_blank">Source</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                {{> login}}
+            </ul>
+        </div>
+    </div>
+</template>
+
+
+
+
+
+<template name="layout" >
+
+
+    {{>nav}}
+    {{> yield}}
+
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+<template name="chatMessages">
+
+    <div id="messages" class="messages span7">
+        {{#each chatMessages}}
+            {{> chatMessage}}
+        {{/each}}
+    </div>
+
+</template>
+
+<template name="chatMessage">
+    <p><strong>{{user}}</strong> <span style="font-size: 0.7em; color: darkgray">({{timestamp}})</span>: <i>{{msg}}</i></p>
+</template>

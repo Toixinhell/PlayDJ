@@ -1,0 +1,18 @@
+<template name="videolist">
+    <h4>Your Videolist</h4>
+
+    <input type="text" id="videoMsg" placeholder="Youtube URL" style="width: 50%; margin-bottom: 0px">
+    <input type="button" value="Add Video to queue" class="btn btn-primary sendVideo">
+
+    {{#each videos}}
+        {{> videoitem}}
+    {{/each}}
+
+</template>
+
+<template name="videoitem">
+    <li class="list"><a href="#"> {{data.snippet.title}}</a>
+        <i class="icon icon-trash pull-right removelist"></i>
+        <i class="icon icon-play pull-right playvideo"></i>
+    </li>
+</template>

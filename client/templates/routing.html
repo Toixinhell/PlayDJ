@@ -1,0 +1,25 @@
+
+<head>
+    <title>Playtogether</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+{{> sAlert}}
+{{> applicationRootLayout}}
+</body>
+
+<template name="applicationRootLayout">
+    {{> Template.dynamic template=header}}
+    {{#if authInProcess}}
+        <p>Auth loading ...</p>
+    {{else}}
+            {{> Template.dynamic template=main}}
+    {{/if}}
+    {{> Template.dynamic template=footer}}
+</template>
+
+
+<template name="404">
+<h1>404</h1>
+</template>

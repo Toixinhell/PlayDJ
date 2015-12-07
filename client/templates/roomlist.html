@@ -1,0 +1,14 @@
+<template name="roomlist">
+    <h4>availible Rooms</h4>
+
+    {{#each rooms}}
+        {{> roomitem}}
+    {{/each}}
+
+</template>
+
+<template name="roomitem">
+    <li class="list">RoomID: {{_id}} Admin: {{adminname}}
+        <i class="icon icon-play pull-right enterRoom"></i>
+    </li>
+</template>
