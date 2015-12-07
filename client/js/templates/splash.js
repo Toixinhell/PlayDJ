@@ -1,10 +1,18 @@
 /**
- * Created by ToixInHell on 02.12.2015.
+ * Created by ToixInHell on 07.12.2015.
  */
-
-Template.splash.events({
-    'click input[type=button]': function (event, template) {
-        App.enterRoom(App.getDefaultRoomId());
+Template.splash.helpers({
+    rooms: function() {
+        //var postId = FlowRouter.getParam('postId');
+        var room = Rooms.findOne() || {};
+        return room;
     }
 });
 
+//Template.splash.onCreated(function() {
+//    var self = this;
+//    self.autorun(function() {
+//        //var postId = FlowRouter.getParam('postId');
+//        self.subscribe('allRooms');
+//    });
+//});

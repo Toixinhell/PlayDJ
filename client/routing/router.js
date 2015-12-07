@@ -1,22 +1,47 @@
+Accounts.onLogin(function() {
+    var path = FlowRouter.current().path;
+    // we only do it if the user is in the login page
+    if(path === "/login"){
+        FlowRouter.go("/");
+    }
+    else {
+        FlowRouter.go("/");
+    }
+});
+
 var privateRoutes = FlowRouter.group({
     name: 'private',
-    triggersEnter: [
-        trackRouteEntrySite
-    ],
+    triggersEnter: [trackRouteEntrySite],
     triggersExit: [trackRouteCloseSite]
 })
 
 
 privateRoutes.route( '/', {
+    subscriptions: function(params) {
+        console.log( "Subscribing to room Data");
+        //this.register('currentMessages', Meteor.subscribe('messages', params._id));
+        this.register('currentMessages', Meteor.subscribe('allMessages', params._id));
+        this.register('currentRooms', Meteor.subscribe('allRooms', params._id));
+    },
     action: function() {
+        console.log("Rendering splash");
+        BlazeLayout.render( 'applicationRootLayout', {
+            header: 'navTemplate',
+            main: 'main',
+            footer: 'fotterTemplae'
+        });
+    }
+});
+
+privateRoutes.route( '/login', {
+    action: function() {
+        console.log("Rendering splash");
         BlazeLayout.render( 'applicationRootLayout', {
             header: 'navTemplate',
             main: 'splash',
-            footer: 'footerTemplate'
+            footer: 'fotterTemplae'
         });
     }
-
-
 });
 
 /***
@@ -27,10 +52,12 @@ function trackRouteEntrySite() {
     // context is the output of `FlowRouter.current()`
     console.log("trackRouteEntrySite now triggering preconditions..");
     if (Meteor.isClient){
-        console.log("trackRouteEntrySite is client");
+        console.log("trackRouteEntrySite is client: user?" + Meteor.user());
         if (Meteor.user()) {
             console.log("trackRouteEntrySite User logged in");
-            FlowRouter.go('/rooms');
+        }
+        else {
+            FlowRouter.go("/login");
         }
     }
     if (Meteor.isServer){
@@ -56,10 +83,8 @@ var rooms = privateRoutes.group({
     prefix: "/rooms",
     name: "rooms",
     subscriptions: function(params) {
-        console.log( "Subscribing to room Data");
-        this.register('currentMessages', Meteor.subscribe('messages', params._id));
-        this.register('currentRooms', Meteor.subscribe('rooms', params._id));
-
+        this.register('currentMessages', Meteor.subscribe('allMessages', params._id));
+        this.register('currentRooms', Meteor.subscribe('allRooms', params._id));
     },
     triggersEnter: [trackRouteEntryRoom],
     triggersExit: [trackRouteCloseRoom]
@@ -70,7 +95,6 @@ rooms.route( '/', {
     action: function( params, queryParams ) {
         console.log( params );
         console.log( queryParams );
-
         BlazeLayout.render( 'applicationRootLayout', {
             header: 'navTemplate',
             main: 'roomlist',
@@ -81,14 +105,20 @@ rooms.route( '/', {
 
 // http://app.com/rooms/:_id
 rooms.route( '/:roomId', {
+    subscriptions: function(params) {
+        console.log( "Route: /:roomId = " + params.roomId);
+        console.log( "Subscribing to singleRoom Data with id "+ params.roomId);
+        //this.register('currentMessages', Meteor.subscribe('messages', params.roomId));
+        //this.register('currentRoom', Meteor.subscribe('singleRoom', params.roomId));
+    },
     action: function (params, queryParams) {
         console.log("We're viewing a single room. Params: " + params.roomId + " Queryparams: " + queryParams.toString());
         console.log("Group name: "+FlowRouter.current().route.group.name);
         BlazeLayout.render('applicationRootLayout', {
             header: 'navTemplate',
             //sidebar: 'sidebarTemplate',
-            main: 'main'
-            //footer: 'footerTemplate'
+            main: 'room',
+            footer: 'footerTemplate'
         });
     }
 });
@@ -102,7 +132,7 @@ function trackRouteEntryRoom(context) {
     // context is the output of `FlowRouter.current()`
     console.log("trackRouteEntryRoom now triggering preconditions..");
     if (Meteor.isClient){
-       // redirect("rooms/" + params._id );
+        // redirect("rooms/" + params._id );
         Session.set("roomId", context.params.roomId);
     }
     if (Meteor.isServer){

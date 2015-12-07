@@ -1,19 +1,13 @@
 /**
  * Created by ToixInHell on 01.12.2015.
  */
-Template.main.helpers({
-    isReady: function(sub) {
-        if(sub) {
-            var subrdy = FlowRouter.subsReady(sub);
-            console.log("ready " + sub + " ? "+subrdy);
-            return subrdy;
-        } else {
-            console.log(FlowRouter.subsReady());
-            return FlowRouter.subsReady();
 
-        }
+
+
+Template.room.helpers({
+    room: function () {
+        return Rooms.findOne();
     }
-
 });
 // State vars
 var player;
@@ -65,15 +59,14 @@ var getVideoId = function (url) {
 
 var updateTime = function () {
     if (player && player.getCurrentTime) {
-        if (App.getRoom().users[0] == Session.get('userId')) {
-            Meteor.call('updateVideoTime', Session.get('roomId'), player.getCurrentTime());
-        }
+        console.log(privateRoutes.getParam("roomId"));
+        Meteor.call('updateVideoTime', Flowrouter.getParam("roomId"), player.getCurrentTime());
         $("#video-slider").slider("option", "disabled", !App.amIAdmin());
         $("#video-slider").slider("option", "value", player.getCurrentTime());
         $("#video-slider").slider("option", "max", player.getDuration());
         if (App.getRoom().videoTime > player.getCurrentTime() + 3) {
-            player.seekTo(App.getRoom().videoTime + 0.5);
-            if (!App.getRoom().videoPlaying) {
+            player.seekTo(Rooms.findOne().videoTime + 0.5);
+            if (!Rooms.findOne().videoPlaying) {
                 player.pauseVideo();
             }
         }
@@ -205,7 +198,7 @@ sendAdminMessage = function (roomId, text) {
 
 var toggleVideoPlay = function () {
 
-    if (!App.getRoom().videoPlaying) {
+    if (!Rooms.findOne().videoPlaying) {
         Rooms.update(Session.get('roomId'), {$set: { videoPlaying: true }});
         sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' started the video');
     } else {

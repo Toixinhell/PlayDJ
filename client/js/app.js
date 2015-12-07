@@ -1,3 +1,11 @@
+//Accounts.onLogin(function () {
+//    if (FlowRouter.current().route.group.name === 'private') {
+//        console.log("on login triggered")
+//        FlowRouter.go('/main')
+//    }
+//
+//});
+
 App = {
     getUser: function () {
         return Meteor.userId();
@@ -16,15 +24,14 @@ App = {
 
     },
 
-    getRoom: function () {
-        if(Session.get('roomId'))
-        {
-            console.log("client whants to know its current room, returning for SessionID: " + Rooms.find({_id: Session.get('roomId')},{sort: {priority: 1}, limit: 1}));
-            return Rooms.find({_id: Session.get('roomId')},{sort: {priority: 1}, limit: 1}).fetch();
-        }
-
-
-    },
+    //getRoom: function () {
+    //    if(Session.get('roomId'))
+    //    {
+    //        return Rooms.findOne(FlowRouter.param("roomId")).fetch();
+    //    }
+    //
+    //
+    //},
     indexifyUsers: function () {
         var objects = App.getRoom(Session.get("roomId")).users;
         for (var i = 0; i < objects.length; i++) {

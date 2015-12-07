@@ -8,10 +8,10 @@ Accounts.ui.config({
     passwordSignupFields: 'USERNAME_ONLY'
 });
 
-Accounts.onLogin(function(){
-    Session.set('userId', Meteor.userId());
-});
+
 Meteor.startup(function () {
+
+
 
     sAlert.config({
         effect: '',

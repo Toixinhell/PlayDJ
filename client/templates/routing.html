@@ -1,4 +1,3 @@
-
 <head>
     <title>Playtogether</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -6,20 +5,43 @@
 <body>
 
 {{> sAlert}}
-{{> applicationRootLayout}}
+
 </body>
 
 <template name="applicationRootLayout">
-    {{> Template.dynamic template=header}}
-    {{#if authInProcess}}
-        <p>Auth loading ...</p>
-    {{else}}
+
+            {{> Template.dynamic template=header}}
+
+
             {{> Template.dynamic template=main}}
-    {{/if}}
-    {{> Template.dynamic template=footer}}
+
+            {{> Template.dynamic template=footer}}
+
+
 </template>
 
 
+
 <template name="404">
-<h1>404</h1>
+    <div class="full-page-inner cover-bg">
+        <div class="cover-container">
+            <div class="cover-inner">
+                <h1>404</h1>
+                <span> Well you just had to the whole thing!</span>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="navTemplate">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <a class="brand" href="#">PlayTogether</a>
+            <ul class="nav">
+                <li><a href="https://github.com/toixinhell/playDJ" target="_blank">Source</a></li>
+                <li><a>{{> loginButtons }}</a></li>
+            </ul>
+        </div>
+    </div>
 </template>

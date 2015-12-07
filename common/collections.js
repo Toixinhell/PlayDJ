@@ -11,12 +11,12 @@ Videos = new Meteor.Collection("videos");
 Room = function () {
     this.users = [];
     this.messages = [];
-    this.videoId = '';
-    this.videoTitle = '';
+    this.videoId = 'jofNR_WkoCE';
+    this.videoTitle = 'Ylvis - The Fox (What Does The Fox Say?) [Official music video HD] ';
     this.videoPlaying = false;
     this.videoTime = 0;
     this.admin = false;
-    this.adminname= "aaa";
+    this.adminname= "test";
     this.playlist=[];
 }
 //

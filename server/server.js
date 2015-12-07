@@ -81,15 +81,18 @@ var resetRoom = function () {
     console.log("new  Room ID: " + Rooms.findOne().roomid)
 }
 
-Meteor.publish('rooms',  function(){
+Meteor.publish('allRooms',  function(){
     console.log("publishing Rooms to client");
     return Rooms.find();
 });
-Meteor.publish('messages',  function(){
-    console.log("publishing messages to client");
+Meteor.publish('singleRoom',  function(roomId){
+    console.log("publishing singleRoom to client");
+    return Rooms.findOne(roomId);
+});
+Meteor.publish('allMessages',  function(){
+    console.log("publishing allMessages to client");
     return Messages.find();
 });
-
 /**
  * HTTP Header Security
  *
@@ -102,7 +105,8 @@ Meteor.publish('messages',  function(){
 
 Meteor.startup(function () {
     console.log("Meteor.startup(), server.js")
-    //resetRoom();
+    resetRoom();
+
     //Meteor.setInterval(function () {
     //    var room = Rooms.findOne();
     //    if (room.users.length == 0) {

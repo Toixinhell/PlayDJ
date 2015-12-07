@@ -5,7 +5,7 @@
 Template.activelist.helpers({
     act: function () {
 
-        return App.indexifyPlaylist();
+        return Rooms.find().playlist;
     },
     username: function () {
 

@@ -45,11 +45,17 @@ div#yt-wrapper {
 }
 
 div#video-player {
-    width: 600px;
-    overflow: hidden;
-    border-radius: 12px;
-    background-color: #273747;
-}
+      width: 600px;
+      overflow: hidden;
+      border-radius: 12px;
+      background-color: #273747;
+  }
+
+div.mainbox {
+padding: 10px;
+      border-radius: 12px;
+      background-color: #bce8f1;
+  }
 
 #video-slider {
     position: absolute;
@@ -57,6 +63,7 @@ div#video-player {
     right: 16px;
     left: 54px;
 }
+
 
 .video-control {
     position: relative;
