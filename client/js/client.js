@@ -9,10 +9,11 @@ Accounts.ui.config({
 });
 
 
+
+
+
+
 Meteor.startup(function () {
-
-
-
     sAlert.config({
         effect: '',
         position: 'top-right',
@@ -36,5 +37,4 @@ Meteor.startup(function () {
         //     warning: '/beep-warning.mp3'
         // }
     });
-
 });

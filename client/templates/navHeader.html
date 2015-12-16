@@ -1,0 +1,62 @@
+<template name="navHeader">
+
+<nav class="navbar navbar-inverse navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+            <span class="sr-only">Toggle navigation</span>
+        </button>
+        <a class="navbar-brand" href="#">PlayDJ</a>
+    </div>
+    <div class="collapse navbar-collapse" id="navbar-collapse-01">
+        <ul class="nav navbar-nav">
+            <li><a href="https://github.com/toixinhell/playDJ" target="_blank">Source</a></li>
+
+            <li><a href="#fakelink">About</a></li>
+            {{#if currentUser}}
+                <li><a class="enterDashboard">Dashboard</a></li>
+                <li><a class="enterProfile">Profile</a></li>
+                <li><a class="enterRooms">Rooms</a></li>
+                <li><a class="navbar-text navbar-right">Signed in as</a></li>
+                <li> {{> loginButtons }}</li>
+
+            {{else}}
+                <li>{{> loginButtons }}</li>
+            {{/if}}
+        </ul>
+    {{#if currentUser}}
+        <form class="navbar-form navbar-right" action="#" role="search">
+                <div class="form-group">
+                <div class="input-group">
+                    <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
+          <span class="input-group-btn">
+            <button type="submit" class="btn"><span class="fui-search"></span></button>
+          </span>
+                </div>
+            </div>
+        </form>
+    {{/if}}
+    </div><!-- /.navbar-collapse -->
+</nav><!-- /navbar -->
+</template>
+
+<!--<form class="navbar-form navbar-left" action="#" role="search" >-->
+    <!--<div class="form-group">-->
+        <!--<div class="input-group">-->
+            <!--<input class="form-control" id="navbarInput-01" type="search" placeholder="Search">-->
+          <!--<span class="input-group-btn">-->
+            <!--<button type="submit" class="btn"><span class="fui-search"></span></button>-->
+          <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</form>-->
+
+<!--<form class="navbar-form navbar-right" action="#" role="search">-->
+    <!--<div class="form-group">-->
+        <!--<div class="input-group">-->
+            <!--<input class="form-control" id="navbarInput-01" type="search" placeholder="Search">-->
+          <!--<span class="input-group-btn">-->
+            <!--<button type="submit" class="btn"><span class="fui-search"></span></button>-->
+          <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</form>-->

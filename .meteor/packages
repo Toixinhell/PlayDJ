@@ -18,7 +18,7 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 #insecure                # Allow all DB writes from clients (for prototyping)
 accounts-password
-accounts-ui
+accounts-ui-unstyled
 #autopublish
 bootstrap
 http
@@ -28,3 +28,5 @@ adrianliaw:youtube-iframe-api
 juliancwirko:s-alert
 kadira:flow-router
 kadira:blaze-layout
+#mrt:jquery-ui
+sunkay:easy-side-menu

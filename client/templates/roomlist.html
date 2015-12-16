@@ -1,15 +1,52 @@
+<template name="roomlistHelperTemplate">
+
+
+</template>
+
+
+
 <template name="roomlist">
-    <h4>availible Rooms</h4>
+    <form class="navbar-form navbar-inverse" action="#" role="row">
+        <div class="form-group">
+            <div class="input-group">
+                <a class="lead">Active Rooms</a>
+                <input class="form-control navbar-inverse" id="roomSearchInput" type="search" placeholder="Filter Room list">
+                <div class="input-group-btn">
+                    <button class="btn fui-user" type="button"></button>
+                    <button class="btn filterUser" id="filterUserState"><span class="fui-plus"></span></button>
+                </div>
+            </div>
+        </div>
 
-    {{#each rooms}}
-        {{> roomitem}}
-    {{/each}}
-
+    </form>
+    <div class="rooms">
+    <ul class="nav navbar-inverse nav-stacked">
+        {{#each rooms}}
+            <li>
+                <span class="span4 roomlistitem">
+                    <a class="lead navbar-inverse enterRoom">{{roomname}}</a>
+                    <!--<a class="navbar-inverse navbar-link">{{_id}}</a>-->
+                    <a class="navbar-inverse navbar-link">{{adminname admin}}</a>
+                    <a>{{users.adminname}}</a>
+                    <span class="span12">
+                    <a class="navbar-inverse fui-cross deleteRoom"></a>
+                    <a class="navbar-inverse fui-volume enterRoom"></a>
+                       </span>
+                </span>
+            </li>
+        {{/each}}
+    </ul>
+    </div>
+    <form class="nav navbar navbar-form navbar-inverse" role="row">
+        <div class="form-group" style="display:inline-block; width:100%" >
+            <div class="input-group">
+                <input type="text" class="form-control navbar-inverse" id="roomname" placeholder="Room Name ..." />
+                <div class="input-group-btn">
+                    <button class="btn addRoom"><span class="fui-plus"></span></button>
+                </div>
+            </div>
+        </div>
+    </form>
 
 </template>
 
-<template name="roomitem">
-    <li class="list">RoomID: {{_id}} Admin: {{adminname}}
-        <i class="icon icon-play  enterRoom"></i>
-    </li>
-</template>

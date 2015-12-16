@@ -4,20 +4,29 @@
 Messages = new Meteor.Collection("messages");
 Rooms = new Meteor.Collection("rooms");
 Videos = new Meteor.Collection("videos");
-//ActivePlaylists = new Meteor.Collection("activeplaylists");
+Profiles = new Meteor.Collection("profiles");
 //Users = new Meteor.Collection("users");
-
 // Objects
-Room = function () {
-    this.users = [];
-    this.messages = [];
+Room = function (userId, name) {
+
+    //Room stuff
+    this.roomname = name;
+    this.admin = userId;
+
+    //this.adminname= Meteor.users.find(userId).fetch();
+    //Video stuff
     this.videoId = 'jofNR_WkoCE';
     this.videoTitle = 'Ylvis - The Fox (What Does The Fox Say?) [Official music video HD] ';
     this.videoPlaying = false;
     this.videoTime = 0;
-    this.admin = false;
-    this.adminname= "test";
+
+    //Misc
+    this.created = new Date(),
+
+    //Room lists
     this.playlist=[];
+    this.users = [];
+    this.messages = [];
 }
 //
 //ActivePlaylist = function () {

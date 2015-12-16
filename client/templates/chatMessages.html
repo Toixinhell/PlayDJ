@@ -1,13 +1,24 @@
-<template name="chatMessages">
-
-    <div id="messages" class="messages">
+<template name="chatMessages" xmlns="http://www.w3.org/1999/html">
+    <form class="navbar-form navbar-inverse nav-header" action="#">
+        <a class="lead">Global Chat</a>
+    </form>
+    <ul class="nav navbar-inverse nav-stacked messages">
         {{#each chatMessages}}
-            {{> chatMessage}}
+            <li><span>
+                <a class="navbar-link">{{user}}</a>
+                <a>{{msg}}</a>
+               </span>
+            </li>
         {{/each}}
-    </div>
-
-</template>
-
-<template name="chatMessage">
-    <p><strong>{{user}}</strong> <span style="font-size: 0.7em; color: darkgray">({{timestamp}})</span>: <i>{{msg}}</i></p>
+    </ul>
+    <form class="nav navbar navbar-form navbar-inverse" role="row" action="#">
+        <div class="form-group" style="display:inline-block; width:100%" >
+            <div class="input-group">
+                <input type="text" class="form-control navbar-inverse" id="msg" placeholder="say something .." />
+                <div class="input-group-btn">
+                    <button class="btn sendMsg"  ><span class="fui-chat"></span></button>
+                </div>
+            </div>
+        </div>
+    </form>
 </template>

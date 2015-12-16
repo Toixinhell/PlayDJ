@@ -1,9 +1,9 @@
 <template name="activelist">
     <h4>Active List</h4>
 
-    {{#each act}}
-        <li class="list">
-            {{index}}:  {{snippet.title}}
+    {{#each activeRoomList}}
+        <li class="list" data-value="{{@index}}">
+           {{index}} :  {{snippet.title}}
             <i class="icon icon-trash pull-right clearActivePlaylist"></i>
             <i class="icon icon-play pull-right playActivePlaylist"></i>
         </li>

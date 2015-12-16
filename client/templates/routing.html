@@ -1,47 +1,36 @@
 <head>
     <title>Playtogether</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <!--<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />-->
 </head>
-<body>
+
+<body class="Site">
+
 
 {{> sAlert}}
+
 
 </body>
 
 <template name="applicationRootLayout">
 
-            {{> Template.dynamic template=header}}
+        {{> Template.dynamic template=header}}
+    <div class="row-fluid">
+                {{> Template.dynamic template=sidebar}}
 
-
-            {{> Template.dynamic template=main}}
-
-            {{> Template.dynamic template=footer}}
-
-
-</template>
-
-
-
-<template name="404">
-    <div class="full-page-inner cover-bg">
-        <div class="cover-container">
-            <div class="cover-inner">
-                <h1>404</h1>
-                <span> Well you just had to the whole thing!</span>
-
-            </div>
-        </div>
+                {{> Template.dynamic template=main}}
     </div>
+        {{> Template.dynamic template=footer}}
+
+
+
+
 </template>
 
-<template name="navTemplate">
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <a class="brand" href="#">PlayTogether</a>
-            <ul class="nav">
-                <li><a href="https://github.com/toixinhell/playDJ" target="_blank">Source</a></li>
-                <li><a>{{> loginButtons }}</a></li>
-            </ul>
-        </div>
-    </div>
-</template>
+
+
+
+
+
+

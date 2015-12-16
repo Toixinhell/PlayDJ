@@ -1,12 +1,17 @@
 <template name="main">
-    <div class="row-fluid">
-        <div class="mainbox span4">
-                {{> roomlist}}
-        </div>
-        <div class="mainbox span4">
-            {{> chatMessages}}
-            {{> input}}
-        </div>
-    </div>
+    {{#if currentUser}}
 
+        <div class="mainBox roomBox span4">
+            {{> roomlist}}
+        </div>
+        <div class="mainBox chatBox span4">
+            {{> chatMessages}}
+        </div>
+        <div class="mainBox usersBox span4"  data-spy="scroll" data-target=".navbar" data-offset="50">
+            {{> users}}
+        </div>
+
+{{else}}
+        {{>splash}}
+        {{/if}}
 </template>

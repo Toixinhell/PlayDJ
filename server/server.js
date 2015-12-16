@@ -1,10 +1,68 @@
 
+/*
+ *   The Server starts up here !
+ *
+ *
+ */
+Meteor.startup(function () {
 
+    /*
+    *   Create a user stub
+    *
+     */
+
+   // var userBaseProfile = JSON.parse();
+
+    //resetRoom();
+
+    //Meteor.setInterval(function () {
+    //    var room = Rooms.findOne();
+    //    if (room.users.length == 0) {
+    //        resetRoom();
+    //    }
+    //}, 10000);
+    //// Listen to incoming HTTP requests, can only be used on the server
+    //WebApp.connectHandlers.use(function(req, res, next) {
+    //    res.setHeader("Access-Control-Allow-Origin", "*");
+    //    return next();
+    //});
+    //console.log(WebApp.connectHandlers);
+});
+/*   Accounts configuration
+ *   take care of the user creation
+ *
+ */
+
+Accounts.onCreateUser(function (options, user) {
+    //var baseProfile = Meteor.settings.public.imARidiculousHumanBeing;
+    //
+    console.log("user creation profile:" + Meteor.settings.userBaseProfile);
+    //
+    //Profiles.insert(baseProfile);
+    options.profile = Meteor.settings.userBaseProfile;
+    options.profile.created = new Date();
+
+    if (options.profile) {
+        console.log("user has profile.");
+        user.profile = options.profile;
+    }
+    return user;
+
+});
+
+
+/*
+*   All server methods are declared here
+*
+*   they are called from the client:
+*        Meteor.call('nameOfTheFunction', params);
+*
+ */
 Meteor.methods({
     updateVideoTime: function (roomId, time) {
         //console.log("updateVideoTime roomid:" + roomId )
-        if (Math.abs(time - Rooms.findOne(roomId).videoTime) < 3) {
-            Rooms.update(roomId, {$set: { videoTime: time }});
+        if (Math.abs(time - Rooms.findOne().videoTime) < 3) {
+            Rooms.update(Rooms.findOne()._id, {$set: { videoTime: time }});
         }
     },
     changeVideoTime: function (roomId, time) {
@@ -18,18 +76,16 @@ Meteor.methods({
         for (i = 0; i < playlist.length; i++) {
             console.log("REMOVE LIST ADMIN SERVER  " + playlistitem);
             // If you need to access a value in the nested doc:
-            var nestedDoc = playlist[i];
 
-            Rooms.update({_id:roomid},{ $pull: {'playlist':{'id.videoId': playlistitem}}});
 
-}
+
         console.log(Rooms.findOne({_id:roomid},{ playlist: {id: {$elemMatch:{videoId:playlistitem}}}}));
       // Rooms.update({_id:roomid}, { $pull:{'playlist.id':{videoId: playlistitem}}});
-    },
+    }
+    }    ,
     addVideo: function (text, id,data) {
 
         Videos.insert({
-
 
             owner:id,
             videoID: text,
@@ -47,6 +103,24 @@ Meteor.methods({
     deleteVideo: function (vidID) {
 
             Videos.remove(vidID);
+
+
+
+    },
+    addNewRoom: function (userId, name) {
+        console.log("adding room");
+        Rooms.insert(new Room(userId, name));
+
+
+
+    },
+    deleteRoom: function (userId, roomId) {
+
+
+        console.log(userId + " is deleting room " + roomId);
+
+
+        Rooms.remove(roomId);
 
 
 
@@ -71,8 +145,88 @@ Meteor.methods({
 
 });
 
-// Function to auto-create a room on start up
-// Temporary hack until we support multiple rooms
+/*
+* Here we take care of All publications
+*
+* allRooms: all Rooms of the server (maybe better way?, make smaller?)
+* singleRoom: the room the user is currently listening .. maybe better way of routing & user management?
+*
+*/
+
+Meteor.publish('allRooms',  function(){
+    console.log("publishing Rooms to client");
+    return Rooms.find();
+});
+Meteor.publish('singleRoom',  function(roomId){
+    console.log("publishing singleRoom to client");
+    return Rooms.find(roomId);
+});
+Rooms.allow({
+    insert: function (userId, doc) {
+        // the user must be logged in, and the document must be owned by the user
+        console.log("insert Rooms");
+
+        return true;
+    },
+    update: function (userId, doc, fields, modifier) {
+        // can only change your own documents
+        console.log("updating Rooms");
+        return true;
+    },
+    remove: function (userId, doc) {
+        // can only remove your own documents
+        console.log("remove Rooms");
+
+        return true;
+    }
+});
+
+/*
+* allMessages: All messages of the server
+*
+*/
+Meteor.publish('allMessages',  function(){
+    console.log("publishing allMessages to client");
+    return Messages.find();
+});
+Messages.allow({
+    insert: function (userId, doc) {
+        // the user must be logged in, and the document must be owned by the user
+        console.log("insert Messages");
+
+        return true;
+    },
+    update: function (userId, doc, fields, modifier) {
+        // can only change your own documents
+        console.log("update Messages");
+
+        return true;
+    },
+    remove: function (userId, doc) {
+        // can only remove your own documents
+        console.log("Remove  Messages");
+
+        return true;
+    }
+});
+
+
+///*
+// * allUserData: All User Data of the server
+// *
+// */
+Meteor.publish("allUserData", function () {
+    return Meteor.users.find();
+});
+
+
+
+
+/*
+ * DEBUG: reset all Rooms
+ *
+ */
+
 var resetRoom = function () {
     console.log("reset Room, server.js" )
     Rooms.remove({});
@@ -81,44 +235,4 @@ var resetRoom = function () {
     console.log("new  Room ID: " + Rooms.findOne().roomid)
 }
 
-Meteor.publish('allRooms',  function(){
-    console.log("publishing Rooms to client");
-    return Rooms.find();
-});
-Meteor.publish('singleRoom',  function(roomId){
-    console.log("publishing singleRoom to client");
-    return Rooms.findOne(roomId);
-});
-Meteor.publish('allMessages',  function(){
-    console.log("publishing allMessages to client");
-    return Messages.find();
-});
-/**
- * HTTP Header Security
- *
- * enforce HTTP Strict Transport Security (HSTS) to prevent ManInTheMiddle-attacks
- * on supported browsers (all but IE)
- * > http://www.html5rocks.com/en/tutorials/security/transport-layer-security
- *
- * @header Strict-Transport-Security: max-age=2592000; includeSubDomains
- */
-
-Meteor.startup(function () {
-    console.log("Meteor.startup(), server.js")
-    resetRoom();
-
-    //Meteor.setInterval(function () {
-    //    var room = Rooms.findOne();
-    //    if (room.users.length == 0) {
-    //        resetRoom();
-    //    }
-    //
-    //}, 10000);
-    //// Listen to incoming HTTP requests, can only be used on the server
-    //WebApp.connectHandlers.use(function(req, res, next) {
-    //    res.setHeader("Access-Control-Allow-Origin", "*");
-    //    return next();
-    //});
-    //console.log(WebApp.connectHandlers);
-});
 

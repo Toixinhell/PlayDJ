@@ -1,0 +1,24 @@
+<template name="users">
+    <form class="navbar-form navbar-inverse nav-header" action="#" role="search">
+        <a class="lead">Users Online</a>
+        <div class="form-group pull-right">
+
+            <div class="input-group">
+
+                <input class="form-control" id="userSearchInput" type="search" placeholder="Filter Userlist">
+
+            </div>
+        </div>
+
+    </form>
+
+    <ul class="nav  navbar-inverse nav-stacked users">
+        {{#each users}}
+            <li><span>
+                <a class="navbar-link">{{username}}</a>
+                <a>{{profile.motto}}</a>
+               <a class="badge pull-right">{{profile.pointz}}</a> </span>
+            </li>
+        {{/each}}
+    </ul>
+</template>

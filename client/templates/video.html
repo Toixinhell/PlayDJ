@@ -1,5 +1,6 @@
 
 <template name="video">
+
     <div id="video">
         <div id="video-player">
             <div id="yt-wrapper">
@@ -11,9 +12,9 @@
                 </div>
             </div>
             <div class="video-control">
-                {{>info}}
-                {{>control}}
-                {{>slider}}
+                {{> info}}
+                {{> control}}
+                {{> slider}}
             </div>
         </div>
     </div>
@@ -28,13 +29,17 @@
 </template>
 
 <template name="control">
-    <div id="video-play" class="btn-play">
-        {{#if isPlaying}}
-            <span class="fui-pause"></span>
-        {{else}}
-            <span class="fui-play"></span>
-        {{/if}}
-    </div>
+
+        <div id="video-play" class="btn-play">
+            {{#if isAdmin}}
+            {{#if isPlaying}}
+                <span class="fui-pause"></span>
+            {{else}}
+                <span class="fui-play"></span>
+            {{/if}}
+            {{/if}}
+        </div>
+
 </template>
 
 <template name="slider">

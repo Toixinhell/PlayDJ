@@ -1,15 +1,9 @@
 /**
  * Created by ToixInHell on 03.12.2015.
  */
-Template.video.rendered= function(){
-    console.log('Estás aquí');
-    $.getScript('https://www.youtube.com/iframe_api');
-}
-
 
 Template.video.helpers({
     videoId: function() {
-        console.log("Rooms.find().videoId: " + Rooms.findOne().videoId);
         return Rooms.findOne().videoId;
     }
 });
@@ -18,6 +12,12 @@ Template.control.helpers({
     isPlaying: function() {
         return Rooms.findOne().videoPlaying;
     },
+    isAdmin: function() {
+            if(Meteor.userId() === Rooms.findOne().admin){
+                return true;
+            }
+            return [];
+    },
     videoProgress: function() {
         return Rooms.findOne().videoTime;
     }
@@ -25,7 +25,11 @@ Template.control.helpers({
 
 Template.info.helpers({
     title: function() {
-        console.log(Rooms.find());
+        console.log("HEllo title video.js");
         return Rooms.findOne().videoTitle;
     }
 });
+Template.video.destroyed = function() {
+    Meteor.clearInterval(sliderUpdater);
+};
+

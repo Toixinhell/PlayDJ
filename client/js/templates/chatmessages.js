@@ -9,8 +9,25 @@ Template.chatMessages.helpers({
         return Session.get("roomname");
     }
 });
-Template.chatMessage.helpers({
-    timestamp: function() {
-        return this.ts.toLocaleString();
+
+
+//INPUT TEMPLATE Configuration
+// we define the Events
+Template.chatMessages.events({
+    'click .sendMsg': function (e) {
+        _sendMessage();
+    },
+    'keyup #chatboxMessageInput': function (e) {
+        if (e.type == "keyup" && e.which == 13) {
+            _sendMessage();
+        }
     }
 });
+
+// Extracted function for a message event
+_sendMessage = function () {
+    var el = document.getElementById("msg");
+    Messages.insert({user: Meteor.user().username, msg: el.value, ts: new Date()});
+    el.value = "";
+    el.focus();
+};

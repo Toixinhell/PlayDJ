@@ -2,13 +2,6 @@
  * Created by ToixInHell on 01.12.2015.
  */
 
-
-
-Template.room.helpers({
-    room: function () {
-        return Rooms.findOne();
-    }
-});
 // State vars
 var player;
 var sliderUpdater;
@@ -16,6 +9,21 @@ var shouldScroll = false;
 var appkey = "AIzaSyCeGrLBUdJ5_gb0WGIYUVSXEXARbsunQKk";
 // Utility functions
 
+Template.room.helpers({
+
+    isReady: function () {
+        return FlowRouter.subsReady("currentRoom") && FlowRouter.subsReady("allUserCollections");
+    },
+    room: function () {
+        return Rooms.findOne(FlowRouter.getParam("roomId"));
+    },
+    adminState: function () {
+
+        console.log("AdminState Called: " + FlowRouter.getParam("roomId"));
+       return Rooms.findOne(FlowRouter.getParam("roomId")).admin === Meteor.user()._id;
+        }
+
+});
 
 var sendMessage = function (roomId, sender, text) {
     console.log("send");
@@ -25,21 +33,21 @@ var sendMessage = function (roomId, sender, text) {
 
 
 var updateVideoTitle = function (roomId) {
-    $.getJSON('https://www.googleapis.com/youtube/v3/videos?id=' + App.getRoom().videoId + '&key=' + appkey+ '&part=snippet', function (data) {
+    $.getJSON('https://www.googleapis.com/youtube/v3/videos?id=' + Rooms.findOne(FlowRouter.getParam("roomId")).videoId + '&key=' + appkey+ '&part=snippet', function (data) {
         Rooms.update(roomId, {$set: { videoTitle: data.items[0].snippet.title }});
     });
 }
 
  updateVideo = function (roomId, videoId, playing) {
-    sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' changed the video');
+    sendAdminMessage(Rooms.findOne(FlowRouter.getParam("roomId"))._id, Meteor.userId() + ' changed the video');
 
-    Rooms.update(Session.get('roomId'),
+    Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id,
         {$set:
         { videoId: videoId,
             videoPlaying: playing,
             videoTime: 0
         }});
-    console.log(App.getRoom());
+    console.log(Rooms.findOne(FlowRouter.getParam("roomId")));
 }
 
 var getVideoId = function (url) {
@@ -57,16 +65,19 @@ var getVideoId = function (url) {
     return videoId;
 }
 
-var updateTime = function () {
+ var updateTime = function () {
     if (player && player.getCurrentTime) {
-        console.log(privateRoutes.getParam("roomId"));
-        Meteor.call('updateVideoTime', Flowrouter.getParam("roomId"), player.getCurrentTime());
-        $("#video-slider").slider("option", "disabled", !App.amIAdmin());
+
+        if (Meteor.userId() === Rooms.findOne(FlowRouter.getParam("roomId")).admin) {
+            console.log("update video");
+            Meteor.call('updateVideoTime', Rooms.findOne(FlowRouter.getParam("roomId"))._id, player.getCurrentTime());
+        }
+        //$("#video-slider").slider("option", "disabled", Rooms.findOne(FlowRouter.getParam("roomId")).admin != Meteor.userId());
         $("#video-slider").slider("option", "value", player.getCurrentTime());
         $("#video-slider").slider("option", "max", player.getDuration());
-        if (App.getRoom().videoTime > player.getCurrentTime() + 3) {
-            player.seekTo(Rooms.findOne().videoTime + 0.5);
-            if (!Rooms.findOne().videoPlaying) {
+        if (Rooms.findOne(FlowRouter.getParam("roomId")).videoTime > player.getCurrentTime() + 3) {
+            player.seekTo(Rooms.findOne(FlowRouter.getParam("roomId")).videoTime + 0.5);
+            if (!Rooms.findOne(FlowRouter.getParam("roomId")).videoPlaying) {
                 player.pauseVideo();
             }
         }
@@ -86,84 +97,123 @@ var updateTime = function () {
 //            }
 //        }, 200);
 //
-//        sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' entered the room');
+//        sendAdminMessage(Rooms.findOne(FlowRouter.getParam("roomId"))._id, Meteor.userId()) + ' entered the room');
 //
 //        this.initialized = true;
 //    }
 //}
 
+getNextVideo = function (vidID) {
+    var playlistArray = Rooms.findOne(FlowRouter.getParam("roomId")).playlist;
 
+    var found=false;
+    for(i = 0; i < playlistArray.length; i++) {
+        var detail = playlistArray[i].id;
+        if(detail.videoId === vidID) {
+            found=true;
+            break;
+        }
+    }
+    if(found){
+        var index = i;
+        console.log(index);
+        //Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id, { $pull: {'playlist':{'id.videoId': vidID}}});
+        return Rooms.findOne(FlowRouter.getParam("roomId")).playlist[index + 1].id.videoId;
+    }
+};
 
 window.onbeforeunload = function () {
     // Remove the user from the room
-    Rooms.update(Session.get('roomId'), {$pull: { users: Session.get('userId')}});
-    sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' left the room');
+    Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id, {$pull: { users: Meteor.userId()}});
+    sendAdminMessage(Rooms.findOne(FlowRouter.getParam("roomId"))._id, Meteor.userId() + ' left the room');
 }
 
 window.onYouTubeIframeAPIReady = function () {
-    var roomQuery = Rooms.find(Session.get('roomId'));
+
+
+
+    var roomQuery = Rooms.find(Rooms.findOne(FlowRouter.getParam("roomId"))._id);
     player = new YT.Player('ytplayer', {
         videoId: roomQuery.fetch()[0].videoId,
-        width: '600',
+        width: '400',
         height: '400',
         playerVars: { autoplay: 0, controls: 0, showinfo: 0, iv_load_policy: 3 },
         events: {
             onReady: function (evt) {
-                if (App.getRoom().videoPlaying) {
+                if (Rooms.findOne(FlowRouter.getParam("roomId")).videoPlaying) {
                     player.playVideo();
                 }
             },
             onStateChange: function (evt) {
-                //updateVideoTitle(Session.get('roomId'));
-                console.log("state change:  ")
+                        //updateVideoTitle(Rooms.findOne(FlowRouter.getParam("roomId"))._id);
+                        console.log("state change: onStateChange ");
+                        if (evt.data == YT.PlayerState.ENDED) {
+                            console.log("YT.PlayerState.ENDED");
+                            if(Meteor.userId() === Rooms.findOne(FlowRouter.getParam("roomId")).admin) {
+                                var nextVid =  getNextVideo(Rooms.findOne(FlowRouter.getParam("roomId")).videoId);
+                                console.log(nextVid);
+                                if(nextVid) {
+                                    updateVideo(Rooms.findOne(FlowRouter.getParam("roomId"))._id, nextVid, true);
+
+                                }
+                                else{
+                                    updateVideo(Rooms.findOne(FlowRouter.getParam("roomId"))._id, "TUHgGK-tImY", false);
+                                }
+                            }
+                            $('#iframe-overlay').hide();
+
+                        } else if (evt.data == YT.PlayerState.UNSTARTED) {
+                            console.log("YT.PlayerState.UNSTARTED")
+                            $('#iframe-overlay').show();
+                            var videoId = getVideoId(player.getVideoUrl());
+                            if (videoId != Rooms.findOne(FlowRouter.getParam("roomId")).videoId) {
+                                if(Meteor.userId() === Rooms.findOne(FlowRouter.getParam("roomId")).admin){
+                                updateVideo(Rooms.findOne(FlowRouter.getParam("roomId"))._id, videoId, false);
+                            }
+                            }
+                        }
+
                 if (evt.data == YT.PlayerState.ENDED) {
-                    console.log("YT.PlayerState.ENDED");
-                    if(App.amIAdmin()) {
-                        var nextVid = App.getNextVideo(App.getRoom().videoId);
-                        console.log(nextVid);
-                        updateVideo(Session.get('roomId'), nextVid, true);
-                    }
                     $('#iframe-overlay').hide();
 
                 } else if (evt.data == YT.PlayerState.UNSTARTED) {
-                    console.log("YT.PlayerState.UNSTARTED")
                     $('#iframe-overlay').show();
                     var videoId = getVideoId(player.getVideoUrl());
-                    if (videoId != App.getRoom().videoId) {
-                        if(App.amIAdmin()){
-                        updateVideo(Session.get('roomId'), videoId, false);
-                    }
+                    if (videoId != Rooms.findOne(FlowRouter.getParam("roomId")).videoId && videoId != "https://www.youtube.com/watch") {
+                        updateVideo(Rooms.findOne(FlowRouter.getParam("roomId"))._id, videoId);
                     }
                 }
             }
         }
+
     });
 
     $( "#video-slider" ).slider({
         range: 'min',
         min: 0,
         max: 100,
+        disabled:  Rooms.findOne(FlowRouter.getParam("roomId")).admin != Meteor.userId(),
         slide: function (evt, data) {
-            // Rooms.update(Session.get('roomId'), {$set: { videoTime: data.value }});
+            // Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id, {$set: { videoTime: data.value }});
         },
         create: function (evt, data) {
+            console.log("create slider");
             sliderUpdater = Meteor.setInterval(updateTime, 500);
         },
         stop: function (evt, data) {
             Meteor.clearInterval(sliderUpdater);
-            Meteor.call('changeVideoTime', Session.get('roomId'), data.value);
+            Meteor.call('changeVideoTime', Rooms.findOne(FlowRouter.getParam("roomId"))._id, data.value);
             sliderUpdater = Meteor.setInterval(updateTime, 500);
         }
     });
 
     roomQuery.observe({
         changed: function (newState, oldState) {
-
             if (oldState.videoId != newState.videoId) {
                 // User changed the video
-                player.loadVideoById(newState.videoId, App.getRoom().videoTime, "large");
-                updateVideoTitle(Session.get('roomId'));
-                if (!App.getRoom().videoPlaying) {
+                player.loadVideoById(newState.videoId, Rooms.findOne(FlowRouter.getParam("roomId")).videoTime, "large");
+                updateVideoTitle(Rooms.findOne(FlowRouter.getParam("roomId"))._id);
+                if (!Rooms.findOne(FlowRouter.getParam("roomId")).videoPlaying) {
                     player.pauseVideo();
                 }
             } else if (oldState.videoPlaying != newState.videoPlaying) {
@@ -190,25 +240,29 @@ window.onYouTubeIframeAPIReady = function () {
 
 sendAdminMessage = function (roomId, text) {
     var message = new Message('', text, 'admin');
+console.log("sendinf adminmsg");
 
-    sAlert.info(text);
 
     Rooms.update(roomId, {$push: { messages: message }});
 }
 
 var toggleVideoPlay = function () {
+    if(Meteor.userId() === Rooms.findOne(FlowRouter.getParam("roomId")).admin) {
+        console.log("togglePlay for Room " + Rooms.findOne(FlowRouter.getParam("roomId"))._id + " The playstate is: " + Rooms.findOne(FlowRouter.getParam("roomId")).videoPlaying);
+        if (!Rooms.findOne(FlowRouter.getParam("roomId")).videoPlaying) {
 
-    if (!Rooms.findOne().videoPlaying) {
-        Rooms.update(Session.get('roomId'), {$set: { videoPlaying: true }});
-        sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' started the video');
-    } else {
-        Rooms.update(Session.get('roomId'), {$set: { videoPlaying: false }});
-        sendAdminMessage(Session.get('roomId'), App.getUsername(Session.get('userId')) + ' paused the video');
+            Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id, {$set: {videoPlaying: true}});
+            sendAdminMessage(Rooms.findOne(FlowRouter.getParam("roomId"))._id, Meteor.userId() + ' started the video');
+        } else {
+
+            Rooms.update(Rooms.findOne(FlowRouter.getParam("roomId"))._id, {$set: {videoPlaying: false}});
+            sendAdminMessage(Rooms.findOne(FlowRouter.getParam("roomId"))._id, Meteor.userId() + ' paused the video');
+        }
     }
 }
 
 //Template.adminMessages.messages = function () {
-//    return Rooms.findOne(Session.get('roomId')).messages.map(function (message) {
+//    return Rooms.findOne(Rooms.findOne(FlowRouter.getParam("roomId"))._id).messages.map(function (message) {
 //        if (message.type == 'user') {
 //            message.username = App.getUsername(message.user);
 //        }
@@ -219,16 +273,29 @@ var toggleVideoPlay = function () {
 //Template.room.created = function() {
 //    $.getScript('https://www.youtube.com/iframe_api');
 //};
-Template.control.events({
-    'click div#video-play': function (evt) {
-        if(App.amIAdmin()){ toggleVideoPlay();}
+//
 
+Template.room.created = function() {
+    /* 2. This code loads the IFrame Player API code asynchronously. */
+    console.log("Started player iFrame getter");
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    console.log("ended player iFrame getter");
+};
+Template.control.events({
+
+    'click div#video-play': function (evt) {
+            toggleVideoPlay();
     }
 });
 
 Template.video.events({
     'click div#iframe-overlay': function (evt) {
-        if(App.amIAdmin()){ toggleVideoPlay();}
+            toggleVideoPlay();
     }
 });
 

@@ -1,12 +1,19 @@
 
 <template name="room">
-    <h4>Admin:{{room.adminname}} </h4>
-    <div class="span 5">
+    <div class="span4">
+
+
+
+        <h4>Room: {{room.roomname}} admin: {{room.admin}}  {{#if adminState}} You are Admin {{/if}}</h4>
             {{>video}}
     </div>
     <div class="span4">
         {{> activelist}}
     </div>
+    <div class="span4">
+        {{> youtubeSearch}}
+    </div>
+
 </template>
 
 
